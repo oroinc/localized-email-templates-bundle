@@ -1,0 +1,4 @@
+OroLocalizedEmailTemplatesBundle
+=========================
+
+TBD
