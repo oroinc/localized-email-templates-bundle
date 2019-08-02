@@ -1,6 +1,6 @@
 services:
     oro_localized_email_template.manager.localization_aware_email_template:
-        class: 'Oro\Bundle\LocalizedEmailTemplateBundle\Manager\LocalizationAwareEmailTemplateManager'
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Manager\LocalizationAwareEmailTemplateManager'
         public: true
         decorates: 'oro_email.manager.template_email'
         arguments:
@@ -10,22 +10,22 @@ services:
             - '@oro_localized_email_template.provider.email_template_content_provider'
 
     oro_localized_email_template.provider.preferred_localization_provider:
-        class: 'Oro\Bundle\LocalizedEmailTemplateBundle\Provider\PreferredLocalizationProvider\ChainPreferredLocalizationProvider'
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\ChainPreferredLocalizationProvider'
         arguments:
             - !tagged oro_localized_email_template.preferred_localization_provider
 
-    Oro\Bundle\LocalizedEmailTemplateBundle\Provider\PreferredLocalizationProvider\PreferredLocalizationProviderInterface:
+    Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\PreferredLocalizationProviderInterface:
         alias: 'oro_localized_email_template.provider.preferred_localization_provider'
 
     oro_localized_email_template.provider.preferrer_localization_provider.default:
-        class: 'Oro\Bundle\LocalizedEmailTemplateBundle\Provider\PreferredLocalizationProvider\DefaultPreferredLocalizationProvider'
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\DefaultPreferredLocalizationProvider'
         arguments:
             - '@oro_locale.manager.localization'
         tags:
             - { name: oro_localized_email_template.preferred_localization_provider, priority: 255 }
 
     oro_localized_email_template.provider.email_template_content_provider:
-        class: 'Oro\Bundle\LocalizedEmailTemplateBundle\Provider\LocalizationAwareEmailTemplateContentProvider'
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizationAwareEmailTemplateContentProvider'
         arguments:
             - '@doctrine'
             - '@oro_email.email_renderer'

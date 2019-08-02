@@ -12,7 +12,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 class ChainPreferredLocalizationProvider implements PreferredLocalizationProviderInterface
 {
     /**
-     * @var PreferredLocalizationProviderInterface[]
+     * @var iterable|PreferredLocalizationProviderInterface[]
      */
     private $providers;
 
@@ -20,7 +20,7 @@ class ChainPreferredLocalizationProvider implements PreferredLocalizationProvide
      * ChainPreferredLocalizationProvider constructor.
      * @param PreferredLocalizationProviderInterface[] $providers
      */
-    public function __construct(array $providers)
+    public function __construct(iterable $providers)
     {
         $this->providers = $providers;
     }
