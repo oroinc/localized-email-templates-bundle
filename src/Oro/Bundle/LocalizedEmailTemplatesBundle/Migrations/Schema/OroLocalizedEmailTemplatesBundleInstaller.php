@@ -61,12 +61,18 @@ class OroLocalizedEmailTemplatesBundleInstaller implements Installation, ExtendE
             'template',
             'oro_email_template',
             'id',
-            ['extend' => [
-                'is_extend' => true,
-                'owner' => ExtendScope::OWNER_CUSTOM,
-                'without_default' => true,
-                'on_delete' => 'CASCADE',
-            ]]
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE',
+                ],
+                'datagrid' => ['is_visible' => false],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => false],
+            ]
         );
 
         $this->extendExtension->addManyToOneInverseRelation(

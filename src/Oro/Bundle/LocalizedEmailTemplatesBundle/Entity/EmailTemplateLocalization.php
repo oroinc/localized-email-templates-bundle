@@ -32,7 +32,7 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
     private $localization;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="subject", type="string", length=255, nullable=true)
      */
@@ -43,10 +43,10 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
      *
      * @ORM\Column(name="subject_fallback", type="boolean", options={"default"=true})
      */
-    private $subjectFallback;
+    private $subjectFallback = true;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="content", type="text", nullable=true)
      */
@@ -57,7 +57,7 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
      *
      * @ORM\Column(name="content_fallback", type="boolean", options={"default"=true})
      */
-    private $contentFallback;
+    private $contentFallback = true;
 
     /**
      * @return int
@@ -88,16 +88,16 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
     /**
      * @return string
      */
-    public function getSubject(): string
+    public function getSubject(): ?string
     {
         return $this->subject;
     }
 
     /**
-     * @param string $subject
+     * @param string|null $subject
      * @return EmailTemplateLocalization
      */
-    public function setSubject(string $subject): EmailTemplateLocalization
+    public function setSubject(?string $subject): EmailTemplateLocalization
     {
         $this->subject = $subject;
         return $this;
@@ -124,16 +124,16 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
     /**
      * @return string
      */
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return $this->content;
     }
 
     /**
-     * @param string $content
+     * @param string|null $content
      * @return EmailTemplateLocalization
      */
-    public function setContent(string $content): EmailTemplateLocalization
+    public function setContent(?string $content): EmailTemplateLocalization
     {
         $this->content = $content;
         return $this;

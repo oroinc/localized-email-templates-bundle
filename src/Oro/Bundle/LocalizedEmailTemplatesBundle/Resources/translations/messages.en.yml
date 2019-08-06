@@ -1,0 +1,4 @@
+oro:
+    email:
+        emailtemplate:
+            use_parent_localization: "Use %name% (Parent Localization)"

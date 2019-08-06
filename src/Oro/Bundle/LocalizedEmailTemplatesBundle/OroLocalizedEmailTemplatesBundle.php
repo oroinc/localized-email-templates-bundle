@@ -9,4 +9,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class OroLocalizedEmailTemplatesBundle extends Bundle
 {
+    public function getParent()
+    {
+        return 'OroEmailProBundle';
+    }
 }
