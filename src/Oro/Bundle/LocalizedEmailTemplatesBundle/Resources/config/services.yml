@@ -1,30 +1,28 @@
 services:
+    oro_localized_email_templates.manager.localization_aware_email_notification:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Manager\LocalizationAwareEmailNotificationManager'
+        public: true
+        decorates: 'oro_notification.manager.email_notification'
+        arguments:
+            - '@oro_notification.manager.email_notification_sender'
+            - '@logger'
+            - '@oro_localized_email_templates.provider.localization_template_generator_factory'
+
     oro_localized_email_templates.manager.localization_aware_email_template:
         class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Manager\LocalizationAwareEmailTemplateManager'
         public: true
         decorates: 'oro_email.manager.template_email'
         arguments:
             - '@oro_email.direct_mailer'
-            - '@oro_localized_email_templates.provider.preferred_localization_provider'
             - '@oro_email.mailer.processor'
+            - '@oro_localized_email_templates.provider.localization_template_generator_factory'
+
+    oro_localized_email_templates.provider.localization_template_generator_factory:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizationTemplateGeneratorFactory'
+        public: false
+        arguments:
+            - '@oro_localized_email_templates.provider.preferred_localization_provider'
             - '@oro_localized_email_templates.provider.email_template_content_provider'
-
-    oro_localized_email_templates.provider.preferred_localization_provider:
-        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\ChainPreferredLocalizationProvider'
-        public: false
-        arguments:
-            - !tagged oro_localized_email_templates.preferred_localization_provider
-
-    Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\PreferredLocalizationProviderInterface:
-        alias: 'oro_localized_email_templates.provider.preferred_localization_provider'
-
-    oro_localized_email_templates.provider.preferrer_localization_provider.default:
-        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\DefaultPreferredLocalizationProvider'
-        public: false
-        arguments:
-            - '@oro_locale.manager.localization'
-        tags:
-            - { name: oro_localized_email_templates.preferred_localization_provider, priority: 255 }
 
     oro_localized_email_templates.provider.email_template_content_provider:
         class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizationAwareEmailTemplateContentProvider'
@@ -33,6 +31,34 @@ services:
             - '@doctrine'
             - '@oro_email.email_renderer'
             - '@logger'
+
+    # Preferred localization providers
+    oro_localized_email_templates.provider.preferred_localization_provider:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\ChainPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - !tagged oro_localized_email_templates.preferred_localization_provider
+
+    Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\PreferredLocalizationProviderInterface:
+        alias: 'oro_localized_email_templates.provider.preferred_localization_provider'
+        public: true
+
+    oro_localized_email_templates.provider.preferrer_localization_provider.default:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\DefaultPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@oro_locale.manager.localization'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider, priority: -255 }
+
+    oro_localized_email_templates.provider.preferrer_localization_provider.user:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\UserPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@oro_config.user'
+            - '@oro_locale.manager.localization'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider }
 
     # Forms
     oro_localized_email_templates.form.extension.localized_aware_email_template_type:

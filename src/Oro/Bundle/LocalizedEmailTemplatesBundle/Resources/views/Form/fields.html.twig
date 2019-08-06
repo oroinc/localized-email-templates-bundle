@@ -57,8 +57,11 @@
                     aria-controls="{{ uniqid }}"
                 {% endif %}
         >
-            {{- form.vars.localization_title -}}
-            {% if form.vars.localization is empty %} {% trans %}[Default]{% endtrans %}{% endif -%}
+            {%- if form.vars.localization is not empty -%}
+                {{ form.vars.localization.title }}
+            {%- else -%}
+                {{ 'oro.email.emailtemplate.default_localization'|trans }}
+            {%- endif -%}
         </a>
     </li>
 {% endmacro %}

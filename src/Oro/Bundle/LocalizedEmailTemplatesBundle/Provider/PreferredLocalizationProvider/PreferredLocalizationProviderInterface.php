@@ -23,5 +23,5 @@ interface PreferredLocalizationProviderInterface
      * @return Localization|null
      * @throws \LogicException
      */
-    public function getPreferredLocalization($entity): Localization;
+    public function getPreferredLocalization($entity): ?Localization;
 }

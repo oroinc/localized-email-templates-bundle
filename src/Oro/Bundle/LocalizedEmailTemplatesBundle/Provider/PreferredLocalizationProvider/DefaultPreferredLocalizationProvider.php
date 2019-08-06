@@ -33,7 +33,7 @@ class DefaultPreferredLocalizationProvider implements PreferredLocalizationProvi
     /**
      * {@inheritDoc}
      */
-    public function getPreferredLocalization($entity): Localization
+    public function getPreferredLocalization($entity): ?Localization
     {
         return $this->localizationManager->getDefaultLocalization();
     }

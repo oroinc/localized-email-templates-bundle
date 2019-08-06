@@ -44,12 +44,12 @@ class EmailTemplateLocalizationType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var Localization|null $parentLocalization */
-        $parentLocalization = $options['localization'] ? $options['localization']->getParentLocalization() : null;
-        if ($parentLocalization) {
-            $fallbackLabel = $this->translator->trans('oro.email.emailtemplate.use_parent_localization', [
-                '%name%' => $parentLocalization->getName()
-            ]);
+        if ($options['localization']) {
+            $fallbackLabel = $options['localization']->getParentLocalization()
+                ? $this->translator->trans('oro.email.emailtemplate.use_parent_localization', [
+                    '%name%' => $options['localization']->getParentLocalization()->getTitle()
+                ])
+                : $this->translator->trans('oro.email.emailtemplate.use_default_localization');
         }
 
         $builder->add('subject', TextType::class, [
@@ -58,7 +58,7 @@ class EmailTemplateLocalizationType extends AbstractType
             ],
         ]);
 
-        if ($parentLocalization) {
+        if ($options['localization']) {
             $builder->add('subjectFallback', CheckboxType::class, [
                 'label' => $fallbackLabel,
                 'required' => false,
@@ -74,7 +74,7 @@ class EmailTemplateLocalizationType extends AbstractType
             'wysiwyg_options' => $options['wysiwyg_options'],
         ]);
 
-        if ($parentLocalization) {
+        if ($options['localization']) {
             $builder->add('contentFallback', CheckboxType::class, [
                 'label' => $fallbackLabel,
                 'required' => false,
@@ -84,7 +84,7 @@ class EmailTemplateLocalizationType extends AbstractType
 
         $transformer = new CallbackTransformer(
             function ($data) use ($options) {
-                // Create localized template for each localization
+                // Create localized template for localization
                 return $data ?? (new EmailTemplateLocalization())->setLocalization($options['localization']);
             },
             function ($data) {
@@ -112,9 +112,6 @@ class EmailTemplateLocalizationType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['localization'] = $options['localization'];
-        $view->vars['localization_title'] = $options['localization']
-            ? $options['localization']->getName()
-            : $options['default_localization'];
     }
 
     /**
@@ -124,13 +121,11 @@ class EmailTemplateLocalizationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => EmailTemplateLocalization::class,
-            'default_localization' => null,
             'localization' => null,
             'wysiwyg_enabled' => false,
             'wysiwyg_options' => [],
         ]);
 
-        $resolver->setAllowedTypes('default_localization', ['string']);
         $resolver->setAllowedTypes('localization', ['null', Localization::class]);
         $resolver->setAllowedTypes('wysiwyg_enabled', ['bool']);
     }

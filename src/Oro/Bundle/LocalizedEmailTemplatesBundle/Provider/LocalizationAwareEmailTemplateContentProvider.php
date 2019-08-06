@@ -142,36 +142,21 @@ class LocalizationAwareEmailTemplateContentProvider
         $attribute = ucfirst($attribute);
         $getter = 'get' . $attribute;
         $setter = 'set' . $attribute;
-        $fallbackAllowed = 'is' . $attribute . 'Fallback';
+        $attributeFallback = 'is' . $attribute . 'Fallback';
 
-        $currentTemplate = $this->findTemplate($templateIndex, $localization);
-        $value = call_user_func([$model, $getter]);
-        while (!$value) {
-            // Template not found for localization tree
-            if (!$currentTemplate) {
-                call_user_func([$model, $setter], call_user_func([$entity, $getter]));
-                return;
-            }
-
-            // Localized template found end not empty
-            $currentValue = call_user_func([$currentTemplate, $getter]);
-            if ($currentValue) {
-                call_user_func([$model, $setter], $currentValue);
-                return;
-            }
-
-            // For current attribute not allowed fallback to parent(-s) localizations
-            if (!call_user_func([$currentTemplate, $fallbackAllowed])) {
-                call_user_func([$model, $setter], call_user_func([$entity, $getter]));
+        while ($currentTemplate = $this->findTemplate($templateIndex, $localization)) {
+            // For current attribute not enabled fallback to parent localizations
+            if (!call_user_func([$currentTemplate, $attributeFallback])) {
+                call_user_func([$model, $setter], call_user_func([$currentTemplate, $getter]));
                 return;
             }
 
             // Find next available localized template by localization tree
-            $currentTemplate = $this->findTemplate(
-                $templateIndex,
-                $currentTemplate->getLocalization()->getParentLocalization()
-            );
+            $localization = $currentTemplate->getLocalization()->getParentLocalization();
         }
+
+        // Fallback to default when template for localization not found
+        call_user_func([$model, $setter], call_user_func([$entity, $getter]));
     }
 
     /**
@@ -179,11 +164,16 @@ class LocalizationAwareEmailTemplateContentProvider
      * @param Localization $localization
      * @return EmailTemplateLocalization|null
      */
-    private function findTemplate(array $templateIndex, Localization $localization): ?EmailTemplateLocalization
+    private function findTemplate(array &$templateIndex, ?Localization $localization): ?EmailTemplateLocalization
     {
         while ($localization) {
             if (isset($templateIndex[$localization->getId()])) {
-                return $templateIndex[$localization->getId()];
+                $template = $templateIndex[$localization->getId()];
+
+                // Fix possible deadlock on a looped localization tree
+                unset($templateIndex[$localization->getId()]);
+
+                return $template;
             }
 
             $localization = $localization->getParentLocalization();

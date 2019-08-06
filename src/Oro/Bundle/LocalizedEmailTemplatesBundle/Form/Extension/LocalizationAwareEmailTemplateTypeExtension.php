@@ -68,7 +68,6 @@ class LocalizationAwareEmailTemplateTypeExtension extends AbstractTypeExtension
             'localizations',
             EmailTemplateLocalizationCollection::class,
             [
-                'default_localization' => $this->getDefaultLocalizationName(),
                 'localizations' => $this->getLocalizations(),
                 "wysiwyg_enabled" => $isWysiwygEnabled,
                 'wysiwyg_options' => $isWysiwygEnabled ? $this->getWysiwygOptions() : [],
@@ -76,17 +75,6 @@ class LocalizationAwareEmailTemplateTypeExtension extends AbstractTypeExtension
         );
 
         $builder->setDataMapper(new LocalizationAwareEmailTemplateDataMapper($builder->getDataMapper()));
-    }
-
-    /**
-     * @return string
-     */
-    private function getDefaultLocalizationName(): string
-    {
-        return $this->localeSettings->getLocaleNameByCode(
-            Configuration::DEFAULT_LOCALE,
-            $this->localeSettings->getLanguage()
-        );
     }
 
     /**

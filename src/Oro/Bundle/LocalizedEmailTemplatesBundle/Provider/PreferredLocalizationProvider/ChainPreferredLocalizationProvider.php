@@ -42,14 +42,18 @@ class ChainPreferredLocalizationProvider implements PreferredLocalizationProvide
     /**
      * {@inheritDoc}
      */
-    public function getPreferredLocalization($entity): Localization
+    public function getPreferredLocalization($entity): ?Localization
     {
         foreach ($this->providers as $provider) {
             if ($provider->supports($entity)) {
-                return $provider->getPreferredLocalization($entity);
+                $localization = $provider->getPreferredLocalization($entity);
+                if ($localization) {
+                    return $localization;
+                }
             }
         }
 
+        // Always exists DefaultPreferredLocalizationProvider, if his return null
         throw new \LogicException(
             sprintf('No preferred localization provider for the "%s" entity class exists', \get_class($entity))
         );
