@@ -30,7 +30,12 @@
 {% endblock %}
 
 {% block _oro_email_emailtemplate_localizations_template_fallback_checkbox_row %}
-    <div class="control-group control-group-checkbox">
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    <div class="control-group control-group-checkbox" {{ UI.renderPageComponentAttributes({
+        module: form.vars.page_component,
+        options: form.vars.page_component_options
+    }) }}>
         <div class="controls">
             <div class="control-label wrap">
                 {{ form_widget(form) }}

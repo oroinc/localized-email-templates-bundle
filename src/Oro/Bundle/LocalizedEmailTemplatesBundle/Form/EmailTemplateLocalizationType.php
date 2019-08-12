@@ -78,7 +78,7 @@ class EmailTemplateLocalizationType extends AbstractType
             $builder->add('contentFallback', CheckboxType::class, [
                 'label' => $fallbackLabel,
                 'required' => false,
-                'block_name' => 'fallback_checkbox'
+                'block_name' => 'fallback_checkbox',
             ]);
         }
 
@@ -117,6 +117,20 @@ class EmailTemplateLocalizationType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function finishView(FormView $view, FormInterface $form, array $options): void
+    {
+        if (isset($view->children['subject'], $view->children['subjectFallback'])) {
+            $this->processFallbackView($view->children['subject'], $view->children['subjectFallback'], $options);
+        }
+
+        if (isset($view->children['content'], $view->children['contentFallback'])) {
+            $this->processFallbackView($view->children['content'], $view->children['contentFallback'], $options);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -124,6 +138,11 @@ class EmailTemplateLocalizationType extends AbstractType
             'localization' => null,
             'wysiwyg_enabled' => false,
             'wysiwyg_options' => [],
+            'fallback_checkbox' => [
+                'page_component'
+                    => 'orolocalizedemailtemplates/js/app/components/localized-template-fallback-component',
+                'page_component_options' => [],
+            ]
         ]);
 
         $resolver->setAllowedTypes('localization', ['null', Localization::class]);
@@ -144,5 +163,26 @@ class EmailTemplateLocalizationType extends AbstractType
     public function getBlockPrefix(): string
     {
         return 'oro_email_emailtemplate_localization';
+    }
+
+    /**
+     * @param FormView $field
+     * @param FormView $fallback
+     * @param array $options
+     */
+    private function processFallbackView(FormView $field, FormView $fallback, array $options): void
+    {
+        $field->vars['disabled'] = (bool)$fallback->vars['data'];
+
+        $fallback->vars['page_component'] = $options['fallback_checkbox']['page_component'];
+        $fallback->vars['page_component_options'] = json_encode(
+            array_merge(
+                $options['fallback_checkbox']['page_component_options'],
+                [
+                    'sourceId' => $fallback->vars['id'],
+                    'targetId' => $field->vars['id']
+                ]
+            )
+        );
     }
 }
