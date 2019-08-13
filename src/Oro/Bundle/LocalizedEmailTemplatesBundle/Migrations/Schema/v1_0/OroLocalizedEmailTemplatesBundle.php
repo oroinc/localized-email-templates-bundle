@@ -91,5 +91,7 @@ class OroLocalizedEmailTemplatesBundle implements Migration, ExtendExtensionAwar
                 'merge' => ['display' => false]
             ]
         );
+
+        $queries->addPostQuery(new MigrateEmailTemplatesQuery());
     }
 }

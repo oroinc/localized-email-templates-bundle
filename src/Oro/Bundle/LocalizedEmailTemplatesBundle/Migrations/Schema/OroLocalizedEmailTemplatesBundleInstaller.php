@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\LocalizedEmailTemplatesBundle\Migrations\Schema\v1_0\MigrateEmailTemplatesQuery;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -99,5 +100,7 @@ class OroLocalizedEmailTemplatesBundleInstaller implements Installation, ExtendE
                 'merge' => ['display' => false]
             ]
         );
+
+        $queries->addPostQuery(new MigrateEmailTemplatesQuery());
     }
 }
