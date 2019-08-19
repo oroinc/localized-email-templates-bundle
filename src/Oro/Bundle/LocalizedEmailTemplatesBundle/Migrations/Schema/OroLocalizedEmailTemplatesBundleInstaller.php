@@ -12,7 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
- * The LocalizedEmailTemplate bundle class
+ * The LocalizedEmailTemplate bundle installer
  */
 class OroLocalizedEmailTemplatesBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
@@ -40,7 +40,7 @@ class OroLocalizedEmailTemplatesBundleInstaller implements Installation, ExtendE
      */
     public function up(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->createTable('oro_email_template_trans');
+        $table = $schema->createTable('oro_email_template_localized');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('localization_id', 'integer', ['notnull' => true]);
         $table->addColumn('subject', 'string', ['notnull' => false, 'length' => 255]);
@@ -53,7 +53,7 @@ class OroLocalizedEmailTemplatesBundleInstaller implements Installation, ExtendE
             $schema->getTable('oro_localization'),
             ['localization_id'],
             ['id'],
-            ['onUpdate' => 'CASCADE', 'onDelete' => 'CASCADE']
+            ['onDelete' => 'CASCADE']
         );
 
         $this->extendExtension->addManyToOneRelation(
@@ -67,6 +67,7 @@ class OroLocalizedEmailTemplatesBundleInstaller implements Installation, ExtendE
                     'is_extend' => true,
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
+                    'cascade' => ['persist'],
                     'on_delete' => 'CASCADE',
                 ],
                 'datagrid' => ['is_visible' => false],
@@ -86,6 +87,7 @@ class OroLocalizedEmailTemplatesBundleInstaller implements Installation, ExtendE
             ['id'],
             ['id'],
             [
+                'entity' => ['label' => 'oro.localizedemailtemplates.emailtemplatelocalization.entity_label'],
                 'extend' => [
                     'is_extend' => true,
                     'owner' => ExtendScope::OWNER_CUSTOM,
@@ -97,7 +99,8 @@ class OroLocalizedEmailTemplatesBundleInstaller implements Installation, ExtendE
                 'datagrid' => ['is_visible' => false],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
-                'merge' => ['display' => false]
+                'merge' => ['display' => false],
+                'dataaudit' => ['auditable' => false]
             ]
         );
 

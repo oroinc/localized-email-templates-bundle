@@ -1,15 +1,9 @@
 {% extends '!OroEmailBundle:EmailTemplate:update.html.twig' %}
 
-{% form_theme form with [
-    'OroFormBundle:Form:fields.html.twig',
-    '!OroEmailBundle:Form:fields.html.twig',
-    'OroEmailBundle:Form:fields.html.twig',
-]%}
-
 {% block content_data %}
     {% set dataBlocks = [
         {
-            'title': 'General'|trans,
+            'title': 'oro.email.emailtemplate.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
@@ -21,7 +15,7 @@
             }]
         },
         {
-            'title': 'oro.email.emailtemplate.template_data_title'|trans,
+            'title': 'oro.email.emailtemplate.sections.template_data'|trans,
             'subblocks': [
                 {
                     'title': '',

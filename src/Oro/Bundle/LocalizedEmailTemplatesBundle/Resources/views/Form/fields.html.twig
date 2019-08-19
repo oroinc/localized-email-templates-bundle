@@ -1,12 +1,12 @@
 {% block oro_email_emailtemplate_localizations_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    <div class="<<<emailtemplate-translatation oro-tabs tabbable" {{ UI.renderPageComponentAttributes({
+    <div class="emailtemplate-translatation oro-tabs tabbable" {{ UI.renderPageComponentAttributes({
         view: 'oroemail/js/app/views/email-translation-view'
     }) }}>
         {% set tabId = 'email-localization-'|uniqid %}
         {% set tabContentId = tabId %}
-        <div class="oro-tabs__head"  {{ UI.renderPageComponentAttributes({
+        <div class="oro-tabs__head" {{ UI.renderPageComponentAttributes({
             module: 'oroui/js/app/components/tabs-component'
         }) }}>
             <ul class="nav nav-tabs" role="tablist">
@@ -29,24 +29,40 @@
     </div>
 {% endblock %}
 
+{% block _oro_email_emailtemplate_localizations_template_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        {{ form_row(form.subject) }}
+        {% if form.subjectFallback is defined %}
+            {{- form_row(form.subjectFallback) }}
+        {% endif %}
+
+        {{ form_row(form.content) }}
+        {% if form.contentFallback is defined %}
+            {{- form_row(form.contentFallback) }}
+        {% endif %}
+    </div>
+{% endblock %}
+
 {% block _oro_email_emailtemplate_localizations_template_fallback_checkbox_row %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     <div class="control-group control-group-checkbox" {{ UI.renderPageComponentAttributes({
-        module: form.vars.page_component,
-        options: form.vars.page_component_options
+        module: 'orolocalizedemailtemplates/js/app/components/localized-template-fallback-component',
+        options: {
+            'sourceId': form.vars.id,
+            'targetId': form.vars.target_id,
+        }
     }) }}>
+        <div class="control-label wrap">&nbsp;</div>
         <div class="controls">
-            <div class="control-label wrap">
-                {{ form_widget(form) }}
-                {{ form_label(form) }}
-            </div>
+            {{ form_widget(form) }}
+            {{ form_label(form) }}
         </div>
     </div>
 {% endblock %}
 
 {% macro renderTabNavItem(form, isActive = false, uniqid = null) %}
-    {% set locale = 'localizatin-' ~ form.vars.name %}
+    {% set locale = 'localization-' ~ form.vars.name %}
 
     <li class="nav-item">
         <a href="#"
@@ -62,17 +78,17 @@
                     aria-controls="{{ uniqid }}"
                 {% endif %}
         >
-            {%- if form.vars.localization is not empty -%}
-                {{ form.vars.localization.title }}
+            {%- if form.vars.localization_title is not empty -%}
+                {{ form.vars.localization_title }}
             {%- else -%}
-                {{ 'oro.email.emailtemplate.default_localization'|trans }}
+                {{ 'oro.localizedemailtemplates.emailtemplatelocalization.default_localization'|trans }}
             {%- endif -%}
         </a>
     </li>
 {% endmacro %}
 
 {% macro renderTab(form, isActive = false, uniqid = null) %}
-    {% set locale = 'localizatin-' ~ form.vars.name %}
+    {% set locale = 'localization-' ~ form.vars.name %}
 
     <div class="emailtemplate-translatation-fields-{{ locale }} tab-pane{% if isActive %} active{% endif %}"
          role="tabpanel"

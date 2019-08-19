@@ -6,7 +6,7 @@ services:
         arguments:
             - '@oro_notification.manager.email_notification_sender'
             - '@logger'
-            - '@oro_localized_email_templates.provider.localization_template_generator_factory'
+            - '@oro_localized_email_templates.provider.localized_template_aggregator'
 
     oro_localized_email_templates.manager.localization_aware_email_template:
         class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Manager\LocalizationAwareEmailTemplateManager'
@@ -15,10 +15,10 @@ services:
         arguments:
             - '@oro_email.direct_mailer'
             - '@oro_email.mailer.processor'
-            - '@oro_localized_email_templates.provider.localization_template_generator_factory'
+            - '@oro_localized_email_templates.provider.localized_template_aggregator'
 
-    oro_localized_email_templates.provider.localization_template_generator_factory:
-        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizationTemplateGeneratorFactory'
+    oro_localized_email_templates.provider.localized_template_aggregator:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizedTemplateAggregator'
         public: false
         arguments:
             - '@oro_localized_email_templates.provider.preferred_localization_provider'
@@ -30,6 +30,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_email.email_renderer'
+            - '@property_accessor'
             - '@logger'
 
     # Preferred localization providers
@@ -65,8 +66,6 @@ services:
         class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Form\Extension\LocalizationAwareEmailTemplateTypeExtension'
         public: true
         arguments:
-            - '@oro_config.user'
-            - '@oro_locale.settings'
             - '@oro_locale.manager.localization'
         tags:
             - { name: form.type_extension, alias: form, extended_type: 'Oro\Bundle\EmailBundle\Form\Type\EmailTemplateType' }
@@ -76,5 +75,6 @@ services:
         public: true
         arguments:
             - '@translator'
+            - '@oro_locale.manager.localization'
         tags:
             - { name: form.type }

@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Manager;
 
-use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
 use Oro\Bundle\EmailBundle\Manager\TemplateEmailManager;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\EmailBundle\Model\From;
-use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizationTemplateGeneratorFactory;
+use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizedTemplateAggregator;
 
 /**
  * Responsible for sending email templates in preferred the recipients localizations when recipient entities given
@@ -22,22 +21,22 @@ class LocalizationAwareEmailTemplateManager extends TemplateEmailManager
     /** @var Processor */
     private $mailerProcessor;
 
-    /** @var LocalizationTemplateGeneratorFactory */
-    private $templateGeneratorFactory;
+    /** @var LocalizedTemplateAggregator */
+    private $localizedTemplateAggregator;
 
     /**
      * @param \Swift_Mailer $mailer
      * @param Processor $mailerProcessor
-     * @param LocalizationTemplateGeneratorFactory $templateGeneratorFactory
+     * @param LocalizedTemplateAggregator $localizedTemplateAggregator
      */
     public function __construct(
         \Swift_Mailer $mailer,
         Processor $mailerProcessor,
-        LocalizationTemplateGeneratorFactory $templateGeneratorFactory
+        LocalizedTemplateAggregator $localizedTemplateAggregator
     ) {
         $this->mailer = $mailer;
         $this->mailerProcessor = $mailerProcessor;
-        $this->templateGeneratorFactory = $templateGeneratorFactory;
+        $this->localizedTemplateAggregator = $localizedTemplateAggregator;
 
         // Not calling parent constructor!
         // The parent is only needed so that this manager has the valid class for the type hint
@@ -59,22 +58,20 @@ class LocalizationAwareEmailTemplateManager extends TemplateEmailManager
         &$failedRecipients = null
     ): int {
         $sent = 0;
-        $generator = $this->templateGeneratorFactory->createTemplateGenerator($recipients, $criteria, $templateParams);
-        /**
-         * @var EmailTemplate $emailTemplateModel
-         * @var EmailHolderInterface[] $groupedRecipients
-         */
-        foreach ($generator as $emailTemplateModel => $groupedRecipients) {
+        $templateCollection = $this->localizedTemplateAggregator->aggregate($recipients, $criteria, $templateParams);
+
+        foreach ($templateCollection as $localizedTemplateDTO) {
+            $emailTemplate = $localizedTemplateDTO->getEmailTemplate();
             $message = \Swift_Message::newInstance()
-                ->setSubject($emailTemplateModel->getSubject())
-                ->setBody($emailTemplateModel->getContent())
-                ->setContentType($emailTemplateModel->getType());
+                ->setSubject($emailTemplate->getSubject())
+                ->setBody($emailTemplate->getContent())
+                ->setContentType($emailTemplate->getType());
 
             $sender->populate($message);
 
             $this->mailerProcessor->processEmbeddedImages($message);
 
-            foreach ($groupedRecipients as $recipient) {
+            foreach ($localizedTemplateDTO->getRecipients() as $recipient) {
                 $messageToSend = clone $message;
                 $messageToSend->setTo($recipient->getEmail());
 

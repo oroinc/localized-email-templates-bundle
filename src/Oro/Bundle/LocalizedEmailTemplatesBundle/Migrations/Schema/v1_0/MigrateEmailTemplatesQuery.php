@@ -5,10 +5,13 @@ namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Migrations\Schema\v1_0;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Copy email templates translations to templates localizations
+ */
 class MigrateEmailTemplatesQuery extends ParametrizedMigrationQuery
 {
     /** @var string Check content on wysiwyg empty formatting */
-    public const EMPTY_REGEX = '#^(\r*\n*)*'
+    private const EMPTY_REGEX = '#^(\r*\n*)*'
         . '\<!DOCTYPE html\>(\r*\n*)*'
         . '\<html\>(\r*\n*)*'
         . '\<head\>(\r*\n*)*\</head\>(\r*\n*)*'
@@ -20,7 +23,7 @@ class MigrateEmailTemplatesQuery extends ParametrizedMigrationQuery
      */
     public function getDescription()
     {
-        return 'Copy email templates translations to localized templates';
+        return 'Copy email templates translations to templates localizations';
     }
 
     /**
@@ -37,7 +40,7 @@ class MigrateEmailTemplatesQuery extends ParametrizedMigrationQuery
             )
             ->from('oro_email_template_translation', 'trans')
             ->innerJoin('trans', 'oro_language', 'lang', 'lang.code = trans.locale')
-            ->innerJoin('trans', 'oro_localization', 'loc', 'loc.language_id = lang.id')
+            ->innerJoin('lang', 'oro_localization', 'loc', 'loc.language_id = lang.id')
             ->where('trans.content IS NOT NULL');
 
         $stm = $qb->execute();
@@ -52,7 +55,7 @@ class MigrateEmailTemplatesQuery extends ParametrizedMigrationQuery
         foreach ($aggregation as $templateId => $localizations) {
             foreach ($localizations as $localizationId => $data) {
                 $this->connection->insert(
-                    'oro_email_template_trans',
+                    'oro_email_template_localized',
                     [
                         'localization_id' => $localizationId,
                         'template_id' => $templateId,

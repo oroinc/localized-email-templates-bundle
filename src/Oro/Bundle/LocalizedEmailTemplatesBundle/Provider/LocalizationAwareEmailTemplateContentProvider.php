@@ -14,6 +14,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocalizedEmailTemplatesBundle\Entity\EmailTemplateLocalization;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Provides compiled email template information ready to be sent via email.
@@ -26,6 +27,9 @@ class LocalizationAwareEmailTemplateContentProvider
     /** @var EmailRenderer */
     private $emailRenderer;
 
+    /** @var PropertyAccessor */
+    private $propertyAccessor;
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -33,14 +37,17 @@ class LocalizationAwareEmailTemplateContentProvider
      * @param RegistryInterface $doctrine
      * @param EmailRenderer $emailRenderer
      * @param LoggerInterface $logger
+     * @param PropertyAccessor $propertyAccessor
      */
     public function __construct(
         RegistryInterface $doctrine,
         EmailRenderer $emailRenderer,
+        PropertyAccessor $propertyAccessor,
         LoggerInterface $logger
     ) {
         $this->doctrine = $doctrine;
         $this->emailRenderer = $emailRenderer;
+        $this->propertyAccessor = $propertyAccessor;
         $this->logger = $logger;
     }
 
@@ -61,7 +68,7 @@ class LocalizationAwareEmailTemplateContentProvider
 
         try {
             /** @var EmailTemplate $emailTemplate */
-            $emailTemplateEntity =  $repository->findSingleByEmailTemplateCriteria($criteria);
+            $emailTemplateEntity = $repository->findSingleByEmailTemplateCriteria($criteria);
         } catch (NonUniqueResultException | NoResultException $exception) {
             $this->logger->error(
                 'Could not find unique email template for the given criteria',
@@ -71,8 +78,7 @@ class LocalizationAwareEmailTemplateContentProvider
             throw new EmailTemplateNotFoundException($criteria);
         }
 
-        $emailTemplateModel = new EmailTemplateModel();
-        $this->populateModel($emailTemplateModel, $emailTemplateEntity, $localization);
+        $emailTemplateModel = $this->createModelFromEntity($emailTemplateEntity, $localization);
 
         try {
             [$subject, $content] = $this->emailRenderer->compileMessage($emailTemplateModel, $templateParams);
@@ -92,20 +98,20 @@ class LocalizationAwareEmailTemplateContentProvider
             throw new EmailTemplateCompilationException($criteria);
         }
 
-
         return $emailTemplateModel;
     }
 
     /**
-     * @param EmailTemplateModel $model
      * @param EmailTemplate $entity
      * @param Localization $localization
+     * @return EmailTemplateModel
      */
-    private function populateModel(
-        EmailTemplateModel $model,
+    private function createModelFromEntity(
         EmailTemplate $entity,
         Localization $localization
-    ): void {
+    ): EmailTemplateModel {
+        $model = new EmailTemplateModel();
+
         $templateIndex = [];
 
         /** @var EmailTemplateLocalization $templateLocalization */
@@ -121,10 +127,16 @@ class LocalizationAwareEmailTemplateContentProvider
                 ? EmailTemplateModel::CONTENT_TYPE_HTML
                 : EmailTemplateModel::CONTENT_TYPE_TEXT
         );
+
+        return $model;
     }
 
     /**
      * Localize model attribute
+     *
+     * Finding the right template for the localization tree based on the fallback attribute.
+     * When not exist template or specified fallback for localization without a parent
+     * used default attribute value from entity.
      *
      * @param array $templateIndex
      * @param Localization $localization
@@ -139,15 +151,16 @@ class LocalizationAwareEmailTemplateContentProvider
         EmailTemplate $entity,
         string $attribute
     ): void {
-        $attribute = ucfirst($attribute);
-        $getter = 'get' . $attribute;
-        $setter = 'set' . $attribute;
-        $attributeFallback = 'is' . $attribute . 'Fallback';
+        $attributeFallback = $attribute . 'Fallback';
 
         while ($currentTemplate = $this->findTemplate($templateIndex, $localization)) {
             // For current attribute not enabled fallback to parent localizations
-            if (!call_user_func([$currentTemplate, $attributeFallback])) {
-                call_user_func([$model, $setter], call_user_func([$currentTemplate, $getter]));
+            if (!$this->propertyAccessor->getValue($currentTemplate, $attributeFallback)) {
+                $this->propertyAccessor->setValue(
+                    $model,
+                    $attribute,
+                    $this->propertyAccessor->getValue($currentTemplate, $attribute)
+                );
                 return;
             }
 
@@ -156,7 +169,11 @@ class LocalizationAwareEmailTemplateContentProvider
         }
 
         // Fallback to default when template for localization not found
-        call_user_func([$model, $setter], call_user_func([$entity, $getter]));
+        $this->propertyAccessor->setValue(
+            $model,
+            $attribute,
+            $this->propertyAccessor->getValue($entity, $attribute)
+        );
     }
 
     /**

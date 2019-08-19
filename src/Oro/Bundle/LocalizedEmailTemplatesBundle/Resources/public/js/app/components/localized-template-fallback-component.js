@@ -28,7 +28,20 @@ define([
             LocalizedTemplateFallbackComponent.__super__.initialize.call(this, options);
 
             this.$sourceElement = $('#' + this.options.sourceId);
-            this.$sourceElement.on('change', _.bind(this.onChange, this));
+            this.$sourceElement.on('change.localized-template-fallback', _.bind(this.onChange, this));
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$sourceElement.off('.localized-template-fallback');
+
+            LocalizedTemplateFallbackComponent.__super__.dispose.call(this);
         },
 
         /**

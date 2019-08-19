@@ -23,7 +23,7 @@ class DefaultPreferredLocalizationProvider implements PreferredLocalizationProvi
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($entity): bool
     {
@@ -31,7 +31,7 @@ class DefaultPreferredLocalizationProvider implements PreferredLocalizationProvi
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPreferredLocalization($entity): ?Localization
     {

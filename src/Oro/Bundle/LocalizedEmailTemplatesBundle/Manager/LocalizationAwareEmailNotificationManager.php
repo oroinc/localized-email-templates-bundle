@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Manager;
 
-use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
-use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EmailBundle\Model\SenderAwareInterface;
-use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizationTemplateGeneratorFactory;
+use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizedTemplateAggregator;
 use Oro\Bundle\NotificationBundle\Exception\NotificationSendException;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationSender;
@@ -26,32 +24,52 @@ class LocalizationAwareEmailNotificationManager extends EmailNotificationManager
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var LocalizationTemplateGeneratorFactory */
-    private $templateGeneratorFactory;
+    /** @var LocalizedTemplateAggregator */
+    private $localizedTemplateAggregator;
 
     /**
      * @param EmailNotificationSender $emailNotificationSender
      * @param LoggerInterface $logger
-     * @param LocalizationTemplateGeneratorFactory $templateGeneratorFactory
+     * @param LocalizedTemplateAggregator $localizedTemplateAggregator
      */
     public function __construct(
         EmailNotificationSender $emailNotificationSender,
         LoggerInterface $logger,
-        LocalizationTemplateGeneratorFactory $templateGeneratorFactory
+        LocalizedTemplateAggregator $localizedTemplateAggregator
     ) {
         $this->emailNotificationSender = $emailNotificationSender;
         $this->logger = $logger;
-        $this->templateGeneratorFactory = $templateGeneratorFactory;
+        $this->localizedTemplateAggregator = $localizedTemplateAggregator;
 
         // Not calling parent constructor!
         // The parent is only needed so that this manager has the valid class for the type hint
     }
 
     /**
-     * @param TemplateEmailNotificationInterface $notification
-     * @param array $params
-     * @param LoggerInterface|null $logger
-     * @throws NotificationSendException
+     * {@inheritdoc}
+     */
+    public function process(array $notifications, LoggerInterface $logger = null, array $params = []): void
+    {
+        foreach ($notifications as $notification) {
+            try {
+                $this->processSingle($notification, $params, $logger);
+            } catch (NotificationSendException $exception) {
+                $logger = $logger ?? $this->logger;
+                $logger->error(
+                    sprintf(
+                        'An error occurred while sending "%s" notification with email template "%s" for "%s" entity',
+                        \get_class($notification),
+                        $notification->getTemplateCriteria()->getName(),
+                        $notification->getTemplateCriteria()->getEntityName()
+                    ),
+                    ['exception' => $exception]
+                );
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function processSingle(
         TemplateEmailNotificationInterface $notification,
@@ -63,31 +81,34 @@ class LocalizationAwareEmailNotificationManager extends EmailNotificationManager
                 ? $notification->getSender()
                 : null;
 
-            $generator = $this->templateGeneratorFactory->createTemplateGenerator(
+            $templateCollection = $this->localizedTemplateAggregator->aggregate(
                 $notification->getRecipients(),
                 $notification->getTemplateCriteria(),
                 ['entity' => $notification->getEntity()] + $params
             );
-            /**
-             * @var EmailTemplate $emailTemplateModel
-             * @var EmailHolderInterface[] $groupedRecipients
-             */
-            foreach ($generator as $emailTemplateModel => $groupedRecipients) {
+
+            foreach ($templateCollection as $localizedTemplateDTO) {
                 $languageNotification = new TemplateEmailNotification(
                     $notification->getTemplateCriteria(),
-                    $groupedRecipients,
+                    $localizedTemplateDTO->getRecipients(),
                     $notification->getEntity(),
                     $sender
                 );
 
                 if ($notification instanceof TemplateMassNotification) {
                     if ($notification->getSubject()) {
-                        $emailTemplateModel->setSubject($notification->getSubject());
+                        $localizedTemplateDTO->getEmailTemplate()->setSubject($notification->getSubject());
                     }
 
-                    $this->emailNotificationSender->sendMass($languageNotification, $emailTemplateModel);
+                    $this->emailNotificationSender->sendMass(
+                        $languageNotification,
+                        $localizedTemplateDTO->getEmailTemplate()
+                    );
                 } else {
-                    $this->emailNotificationSender->send($languageNotification, $emailTemplateModel);
+                    $this->emailNotificationSender->send(
+                        $languageNotification,
+                        $localizedTemplateDTO->getEmailTemplate()
+                    );
                 }
             }
         } catch (\Exception $exception) {

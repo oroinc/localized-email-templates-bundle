@@ -8,8 +8,10 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocalizedEmailTemplatesBundle\Model\ExtendEmailTemplateLocalization;
 
 /**
+ * Represents localizations for email templates.
+ *
  * @ORM\Entity()
- * @ORM\Table(name="oro_email_template_trans")
+ * @ORM\Table(name="oro_email_template_localized")
  * @Config()
  */
 class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
@@ -27,7 +29,7 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
      * @var Localization
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization")
-     * @ORM\JoinColumn(name="localization_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="localization_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     private $localization;
 

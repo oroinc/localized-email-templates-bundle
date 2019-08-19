@@ -26,7 +26,7 @@ class ChainPreferredLocalizationProvider implements PreferredLocalizationProvide
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($entity): bool
     {
@@ -40,7 +40,7 @@ class ChainPreferredLocalizationProvider implements PreferredLocalizationProvide
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPreferredLocalization($entity): ?Localization
     {

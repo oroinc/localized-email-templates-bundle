@@ -45,14 +45,6 @@ class EmailTemplateLocalizationCollection extends AbstractType
     }
 
     /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getBlockPrefix(): string
