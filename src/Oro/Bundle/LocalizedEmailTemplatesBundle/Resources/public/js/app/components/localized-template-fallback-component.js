@@ -10,7 +10,7 @@ define([
 
         options: {
             sourceId: null,
-            targetId: null,
+            targetId: null
         },
 
         /**
@@ -68,7 +68,7 @@ define([
                     $(editor.editorContainer).children('.disabled-overlay').remove();
                 }
             }
-        },
+        }
     });
 
     return LocalizedTemplateFallbackComponent;

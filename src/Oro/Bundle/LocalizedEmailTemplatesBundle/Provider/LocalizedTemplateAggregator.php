@@ -57,7 +57,6 @@ class LocalizedTemplateAggregator
             }
 
             $localization = $this->localizationProvider->getPreferredLocalization($recipient);
-
             if (!$localization) {
                 throw new \LogicException(sprintf(
                     'No preferred localization for the "%s" recipient class, check service dependencies',

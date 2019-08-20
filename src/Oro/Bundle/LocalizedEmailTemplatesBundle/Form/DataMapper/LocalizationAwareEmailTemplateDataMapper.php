@@ -37,13 +37,11 @@ class LocalizationAwareEmailTemplateDataMapper implements DataMapperInterface
         $innerMapperForms = [];
         foreach ($forms as $form) {
             if ($form->getName() === 'localizations') {
-                $data = [
-                    'default' => new EmailTemplateLocalization(),
-                ];
-
-                $data['default']
-                    ->setSubject($viewData->getSubject())
+                $entity = new EmailTemplateLocalization();
+                $entity->setSubject($viewData->getSubject())
                     ->setContent($viewData->getContent());
+
+                $data = ['default' => $entity];
 
                 /** @var EmailTemplateLocalization $templateLocalization */
                 foreach ($viewData->getLocalizations() as $templateLocalization) {

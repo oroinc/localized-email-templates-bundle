@@ -1,15 +1,17 @@
 oro.localizedemailtemplates:
     emailtemplatelocalization:
-        entity_label: "Email Template Localization"
+        entity_label: 'Email Template Localization'
+        entity_plural_label: 'Email Template Localizations'
 
-        id.label: "Id"
-        subject.label: "Subject"
-        subject_fallback.label: "Fallback subject"
-        content.label: "Content"
-        content_fallback.label: "Fallback content"
-        localization.label: "Localization"
-        template.label: "Template"
+        id.label: 'Id'
+        subject.label: 'Subject'
+        subject_fallback.label: 'Fallback subject'
+        content.label: 'Content'
+        content_fallback.label: 'Fallback content'
+        localization.label: 'Localization'
+        template.label: 'Template'
 
-        default_localization: "Default"
-        use_parent_localization: "Use %name% (Parent Localization)"
-        use_default_localization: "Use Default Localization"
+        form:
+            default_localization: 'Default'
+            use_parent_localization: 'Use %name% (Parent Localization)'
+            use_default_localization: 'Use Default Localization'

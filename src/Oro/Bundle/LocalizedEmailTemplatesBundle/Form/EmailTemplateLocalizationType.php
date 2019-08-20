@@ -23,11 +23,11 @@ class EmailTemplateLocalizationType extends AbstractType
 {
     /** @var string Check content on wysiwyg empty formatting */
     private const EMPTY_REGEX = '#^(\r*\n*)*'
-    . '\<!DOCTYPE html\>(\r*\n*)*'
-    . '\<html\>(\r*\n*)*'
-    . '\<head\>(\r*\n*)*\</head\>(\r*\n*)*'
-    . '\<body\>(\r*\n*)*\</body\>(\r*\n*)*'
-    . '\</html\>(\r*\n*)*$#';
+        . '\<!DOCTYPE html\>(\r*\n*)*'
+        . '\<html\>(\r*\n*)*'
+        . '\<head\>(\r*\n*)*\</head\>(\r*\n*)*'
+        . '\<body\>(\r*\n*)*\</body\>(\r*\n*)*'
+        . '\</html\>(\r*\n*)*$#';
 
     /** @var TranslatorInterface */
     private $translator;
@@ -39,10 +39,8 @@ class EmailTemplateLocalizationType extends AbstractType
      * @param TranslatorInterface $translator
      * @param LocalizationManager $localizationManager
      */
-    public function __construct(
-        TranslatorInterface $translator,
-        LocalizationManager $localizationManager
-    ) {
+    public function __construct(TranslatorInterface $translator, LocalizationManager $localizationManager)
+    {
         $this->translator = $translator;
         $this->localizationManager = $localizationManager;
     }
@@ -53,11 +51,7 @@ class EmailTemplateLocalizationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('subject', TextType::class, [
-                'attr' => [
-                    'maxlength' => 255,
-                ],
-            ])
+            ->add('subject', TextType::class, ['attr' => ['maxlength' => 255]])
             ->add('content', EmailTemplateRichTextType::class, [
                 'attr' => [
                     'class' => 'template-editor',
@@ -69,7 +63,7 @@ class EmailTemplateLocalizationType extends AbstractType
         if ($options['localization']) {
             $fallbackLabel = $options['localization']->getParentLocalization()
                 ? $this->translator->trans(
-                    'oro.localizedemailtemplates.emailtemplatelocalization.use_parent_localization',
+                    'oro.localizedemailtemplates.emailtemplatelocalization.form.use_parent_localization',
                     [
                         '%name%' => $options['localization']->getParentLocalization()->getTitle(
                             $this->localizationManager->getDefaultLocalization()
@@ -77,7 +71,7 @@ class EmailTemplateLocalizationType extends AbstractType
                     ]
                 )
                 : $this->translator->trans(
-                    'oro.localizedemailtemplates.emailtemplatelocalization.use_default_localization'
+                    'oro.localizedemailtemplates.emailtemplatelocalization.form.use_default_localization'
                 );
 
             $builder
@@ -95,7 +89,7 @@ class EmailTemplateLocalizationType extends AbstractType
 
         $builder->addViewTransformer(
             new CallbackTransformer(
-                function ($data) use ($options) {
+                static function ($data) use ($options) {
                     // Create localized template for localization
                     if (!$data) {
                         $data = new EmailTemplateLocalization();
@@ -104,7 +98,7 @@ class EmailTemplateLocalizationType extends AbstractType
 
                     return $data;
                 },
-                function ($data) {
+                static function ($data) {
                     // Clear empty input
                     if ($data instanceof EmailTemplateLocalization) {
                         if (!trim($data->getSubject())) {
@@ -128,9 +122,7 @@ class EmailTemplateLocalizationType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['localization_title'] = $options['localization']
-            ? $options['localization']->getTitle(
-                $this->localizationManager->getDefaultLocalization()
-            )
+            ? $options['localization']->getTitle($this->localizationManager->getDefaultLocalization())
             : null;
 
         if (isset($view->children['subject'], $view->children['subjectFallback'])) {

@@ -95,20 +95,16 @@ class LocalizationAwareEmailNotificationManager extends EmailNotificationManager
                     $sender
                 );
 
+                $emailTemplate = $localizedTemplateDTO->getEmailTemplate();
+
                 if ($notification instanceof TemplateMassNotification) {
                     if ($notification->getSubject()) {
-                        $localizedTemplateDTO->getEmailTemplate()->setSubject($notification->getSubject());
+                        $emailTemplate->setSubject($notification->getSubject());
                     }
 
-                    $this->emailNotificationSender->sendMass(
-                        $languageNotification,
-                        $localizedTemplateDTO->getEmailTemplate()
-                    );
+                    $this->emailNotificationSender->sendMass($languageNotification, $emailTemplate);
                 } else {
-                    $this->emailNotificationSender->send(
-                        $languageNotification,
-                        $localizedTemplateDTO->getEmailTemplate()
-                    );
+                    $this->emailNotificationSender->send($languageNotification, $emailTemplate);
                 }
             }
         } catch (\Exception $exception) {

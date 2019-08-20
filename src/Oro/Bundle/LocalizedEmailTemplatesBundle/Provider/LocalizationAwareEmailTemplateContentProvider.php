@@ -106,15 +106,12 @@ class LocalizationAwareEmailTemplateContentProvider
      * @param Localization $localization
      * @return EmailTemplateModel
      */
-    private function createModelFromEntity(
-        EmailTemplate $entity,
-        Localization $localization
-    ): EmailTemplateModel {
+    private function createModelFromEntity(EmailTemplate $entity, Localization $localization): EmailTemplateModel
+    {
         $model = new EmailTemplateModel();
 
         $templateIndex = [];
 
-        /** @var EmailTemplateLocalization $templateLocalization */
         foreach ($entity->getLocalizations() as $templateLocalization) {
             $templateIndex[$templateLocalization->getLocalization()->getId()] = $templateLocalization;
         }

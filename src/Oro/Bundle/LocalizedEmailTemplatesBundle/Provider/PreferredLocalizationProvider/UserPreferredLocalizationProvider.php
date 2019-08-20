@@ -51,9 +51,7 @@ class UserPreferredLocalizationProvider implements PreferredLocalizationProvider
         $this->userConfigManager->setScopeIdFromEntity($entity);
 
         $localization = $this->localizationManager->getLocalization(
-            $this->userConfigManager->get(
-                Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION)
-            )
+            $this->userConfigManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
         );
 
         $this->userConfigManager->setScopeId($originalScopeId);

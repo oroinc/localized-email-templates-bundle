@@ -50,13 +50,13 @@ class MigrateEmailTemplatesQuery extends ParametrizedMigrationQuery
         $platform = $this->connection->getDatabasePlatform();
         if ($platform instanceof MySqlPlatform) {
             $qb->addSelect(
-                'GROUP_CONCAT(CASE WHEN trans.field = \'subject\' THEN content ELSE null END) as subject',
-                'GROUP_CONCAT(CASE WHEN trans.field = \'content\' THEN content ELSE null END) as content'
+                "GROUP_CONCAT(CASE WHEN trans.field = 'subject' THEN content ELSE null END) as subject",
+                "GROUP_CONCAT(CASE WHEN trans.field = 'content' THEN content ELSE null END) as content"
             );
         } elseif ($platform instanceof PostgreSqlPlatform) {
             $qb->addSelect(
-                'STRING_AGG(CASE WHEN trans.field = \'subject\' THEN content ELSE null END, \',\') as subject',
-                'STRING_AGG(CASE WHEN trans.field = \'content\' THEN content ELSE null END, \',\') as content'
+                "STRING_AGG(CASE WHEN trans.field = 'subject' THEN content ELSE null END, ',') as subject",
+                "STRING_AGG(CASE WHEN trans.field = 'content' THEN content ELSE null END, ',') as content"
             );
         } else {
             $logger->critical('Not allowed database platform for migrate email templates');
