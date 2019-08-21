@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider;
+namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 

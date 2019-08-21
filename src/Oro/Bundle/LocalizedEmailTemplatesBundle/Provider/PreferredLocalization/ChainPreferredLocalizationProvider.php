@@ -1,8 +1,9 @@
 <?php
 
-namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider;
+namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProviderInterface;
 
 /**
  * Chain provider for preferred localization providers allows to extend it's behavior by adding preferred localization
@@ -17,7 +18,6 @@ class ChainPreferredLocalizationProvider implements PreferredLocalizationProvide
     private $providers;
 
     /**
-     * ChainPreferredLocalizationProvider constructor.
      * @param PreferredLocalizationProviderInterface[] $providers
      */
     public function __construct(iterable $providers)

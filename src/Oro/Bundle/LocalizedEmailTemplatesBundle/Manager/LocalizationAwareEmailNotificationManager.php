@@ -3,7 +3,7 @@
 namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Manager;
 
 use Oro\Bundle\EmailBundle\Model\SenderAwareInterface;
-use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizedTemplateAggregator;
+use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizedTemplateProvider;
 use Oro\Bundle\NotificationBundle\Exception\NotificationSendException;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationSender;
@@ -24,22 +24,22 @@ class LocalizationAwareEmailNotificationManager extends EmailNotificationManager
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var LocalizedTemplateAggregator */
-    private $localizedTemplateAggregator;
+    /** @var LocalizedTemplateProvider */
+    private $localizedTemplateProvider;
 
     /**
      * @param EmailNotificationSender $emailNotificationSender
      * @param LoggerInterface $logger
-     * @param LocalizedTemplateAggregator $localizedTemplateAggregator
+     * @param LocalizedTemplateProvider $localizedTemplateProvider
      */
     public function __construct(
         EmailNotificationSender $emailNotificationSender,
         LoggerInterface $logger,
-        LocalizedTemplateAggregator $localizedTemplateAggregator
+        LocalizedTemplateProvider $localizedTemplateProvider
     ) {
         $this->emailNotificationSender = $emailNotificationSender;
         $this->logger = $logger;
-        $this->localizedTemplateAggregator = $localizedTemplateAggregator;
+        $this->localizedTemplateProvider = $localizedTemplateProvider;
 
         // Not calling parent constructor!
         // The parent is only needed so that this manager has the valid class for the type hint
@@ -81,7 +81,7 @@ class LocalizationAwareEmailNotificationManager extends EmailNotificationManager
                 ? $notification->getSender()
                 : null;
 
-            $templateCollection = $this->localizedTemplateAggregator->aggregate(
+            $templateCollection = $this->localizedTemplateProvider->getAggregated(
                 $notification->getRecipients(),
                 $notification->getTemplateCriteria(),
                 ['entity' => $notification->getEntity()] + $params

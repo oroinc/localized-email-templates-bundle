@@ -7,7 +7,7 @@ use Oro\Bundle\EmailBundle\Manager\TemplateEmailManager;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\EmailBundle\Model\From;
-use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizedTemplateAggregator;
+use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizedTemplateProvider;
 
 /**
  * Responsible for sending email templates in preferred the recipients localizations when recipient entities given
@@ -21,22 +21,22 @@ class LocalizationAwareEmailTemplateManager extends TemplateEmailManager
     /** @var Processor */
     private $mailerProcessor;
 
-    /** @var LocalizedTemplateAggregator */
-    private $localizedTemplateAggregator;
+    /** @var LocalizedTemplateProvider */
+    private $localizedTemplateProvider;
 
     /**
      * @param \Swift_Mailer $mailer
      * @param Processor $mailerProcessor
-     * @param LocalizedTemplateAggregator $localizedTemplateAggregator
+     * @param LocalizedTemplateProvider $localizedTemplateProvider
      */
     public function __construct(
         \Swift_Mailer $mailer,
         Processor $mailerProcessor,
-        LocalizedTemplateAggregator $localizedTemplateAggregator
+        LocalizedTemplateProvider $localizedTemplateProvider
     ) {
         $this->mailer = $mailer;
         $this->mailerProcessor = $mailerProcessor;
-        $this->localizedTemplateAggregator = $localizedTemplateAggregator;
+        $this->localizedTemplateProvider = $localizedTemplateProvider;
 
         // Not calling parent constructor!
         // The parent is only needed so that this manager has the valid class for the type hint
@@ -58,7 +58,7 @@ class LocalizationAwareEmailTemplateManager extends TemplateEmailManager
         &$failedRecipients = null
     ): int {
         $sent = 0;
-        $templateCollection = $this->localizedTemplateAggregator->aggregate($recipients, $criteria, $templateParams);
+        $templateCollection = $this->localizedTemplateProvider->getAggregated($recipients, $criteria, $templateParams);
 
         foreach ($templateCollection as $localizedTemplateDTO) {
             $emailTemplate = $localizedTemplateDTO->getEmailTemplate();

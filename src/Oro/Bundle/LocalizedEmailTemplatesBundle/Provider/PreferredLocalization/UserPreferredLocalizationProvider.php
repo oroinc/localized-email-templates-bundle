@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider;
+namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
@@ -12,7 +12,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 /**
  * Returns preferred localization for User entity based on his or her language chosen in system configuration settings.
  */
-class UserPreferredLocalizationProvider implements PreferredLocalizationProviderInterface
+class UserPreferredLocalizationProvider extends BasePreferredLocalizationProvider
 {
     /**
      * @var ConfigManager
@@ -43,9 +43,10 @@ class UserPreferredLocalizationProvider implements PreferredLocalizationProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param User $entity
+     * @return Localization
      */
-    public function getPreferredLocalization($entity): Localization
+    public function getPreferredLocalizationForEntity($entity): Localization
     {
         $originalScopeId = $this->userConfigManager->getScopeId();
         $this->userConfigManager->setScopeIdFromEntity($entity);

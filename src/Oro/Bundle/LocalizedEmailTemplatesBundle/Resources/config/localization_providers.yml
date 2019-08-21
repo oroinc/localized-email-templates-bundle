@@ -1,0 +1,100 @@
+services:
+    # Providers for preferred localization from ...
+    # ... OroLocaleBundle
+    oro_localized_email_templates.provider.preferred_localization_provider:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\ChainPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - !tagged oro_localized_email_templates.preferred_localization_provider
+
+    Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProviderInterface:
+        alias: 'oro_localized_email_templates.provider.preferred_localization_provider'
+        public: true
+
+    # Application default localization
+    # This provider should be called last
+    oro_localized_email_templates.provider.preferred_localization_provider.default:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\DefaultPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@oro_locale.manager.localization'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider, priority: -255 }
+
+    # ... OroNotificationBundle
+    oro_localized_email_templates.provider.preferred_localization_provider.email_address_with_context:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\EmailAddressWithContextPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@oro_localized_email_templates.provider.preferred_localization_provider'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider }
+
+    # ... OroUserBundle
+    oro_localized_email_templates.provider.preferred_localization_provider.user:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\UserPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@oro_config.user'
+            - '@oro_locale.manager.localization'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_providers }
+
+    # ... OroUserProBundle
+    oro_localized_email_templates.provider.preferred_localization_provider.user_with_organization:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\UserWithOrganizationPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@oro_localized_email_templates.provider.preferred_localization_provider.user'
+            - '@?oro_config.organization'
+            - '@oro_config.user'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider }
+
+    # This provider should be run before UserPreferredLocalizationProvider
+    oro_localized_email_templates.provider.preferred_localization_provider.user_primary_organization:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\UserPrimaryOrganizationPreferredLocalizationProvider'
+        arguments:
+            - '@oro_localized_email_templates.provider.preferred_localization_provider.user_with_organization'
+            - '@?oro_config.organization'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider, priority: 100 }
+
+    # ... OroCalendarBundle
+    oro_localized_email_templates.provider.preferred_localization_provider.attendee:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\AttendeePreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@oro_localized_email_templates.provider.preferred_localization_provider'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider }
+
+    # ... OroFrontendBundle
+    # Website default localization
+    # This provider should be run before the last one
+    oro_localized_email_templates.provider.preferred_localization_provider.default_frontend:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\DefaultFrontendPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@?oro_frontend_localization.manager.user_localization'
+            - '@?oro_frontend.request.frontend_helper'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider, priority: -254 }
+
+    # ... OroCustomerBundle
+    oro_localized_email_templates.provider.preferred_localization_provider.customer_user:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\CustomerUserPreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@?oro_frontend_localization.manager.user_localization'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider }
+
+    # ... OroCustomerProBundle
+    oro_localized_email_templates.provider.preferred_localization_provider.customer_user_with_website:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\CustomerUserWithWebsitePreferredLocalizationProvider'
+        public: false
+        arguments:
+            - '@?oro_frontend_localization.manager.user_localization'
+        tags:
+            - { name: oro_localized_email_templates.preferred_localization_provider }

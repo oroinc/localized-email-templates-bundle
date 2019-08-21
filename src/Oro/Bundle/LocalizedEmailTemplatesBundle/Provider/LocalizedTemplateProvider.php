@@ -6,12 +6,11 @@ use Oro\Bundle\EmailBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\LocalizedEmailTemplatesBundle\Model\DTO\LocalizedTemplateDTO;
-use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider\PreferredLocalizationProviderInterface;
 
 /**
  * Provide templates aggregated by recipient preferred localizations
  */
-class LocalizedTemplateAggregator
+class LocalizedTemplateProvider
 {
     /** @var PreferredLocalizationProviderInterface */
     private $localizationProvider;
@@ -39,7 +38,7 @@ class LocalizedTemplateAggregator
      * @param array $params
      * @return LocalizedTemplateDTO[]
      */
-    public function aggregate(
+    public function getAggregated(
         iterable $recipients,
         EmailTemplateCriteria $criteria,
         array $params = []

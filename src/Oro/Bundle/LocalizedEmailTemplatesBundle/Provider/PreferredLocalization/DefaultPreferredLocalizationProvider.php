@@ -1,9 +1,10 @@
 <?php
 
-namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProvider;
+namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
+use Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalizationProviderInterface;
 
 /**
  * Default localization provider is used as a fallback for entities which are not supported by other providers.
