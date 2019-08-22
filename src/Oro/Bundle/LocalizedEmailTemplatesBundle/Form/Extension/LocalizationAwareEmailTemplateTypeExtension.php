@@ -5,7 +5,7 @@ namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Form\Extension;
 use Oro\Bundle\EmailBundle\Form\Type\EmailTemplateType;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\LocalizedEmailTemplatesBundle\Form\DataMapper\LocalizationAwareEmailTemplateDataMapper;
-use Oro\Bundle\LocalizedEmailTemplatesBundle\Form\EmailTemplateLocalizationCollection;
+use Oro\Bundle\LocalizedEmailTemplatesBundle\Form\EmailTemplateLocalizationCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -47,7 +47,7 @@ class LocalizationAwareEmailTemplateTypeExtension extends AbstractTypeExtension
 
         $builder->add(
             'localizations',
-            EmailTemplateLocalizationCollection::class,
+            EmailTemplateLocalizationCollectionType::class,
             [
                 'localizations' => $this->localizationManager->getLocalizations(),
                 'wysiwyg_enabled' => $fieldOptions['content']['attr']['data-wysiwyg-enabled'] ?? false,

@@ -62,9 +62,9 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
     private $contentFallback = true;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

@@ -54,6 +54,7 @@ services:
     # This provider should be run before UserPreferredLocalizationProvider
     oro_localized_email_templates.provider.preferred_localization_provider.user_primary_organization:
         class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\PreferredLocalization\UserPrimaryOrganizationPreferredLocalizationProvider'
+        public: false
         arguments:
             - '@oro_localized_email_templates.provider.preferred_localization_provider.user_with_organization'
             - '@?oro_config.organization'

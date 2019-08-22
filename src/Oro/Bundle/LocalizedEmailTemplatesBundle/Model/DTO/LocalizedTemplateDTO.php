@@ -42,9 +42,11 @@ class LocalizedTemplateDTO
 
     /**
      * @param EmailHolderInterface $recipient
+     * @return LocalizedTemplateDTO
      */
-    public function addRecipient(EmailHolderInterface $recipient): void
+    public function addRecipient(EmailHolderInterface $recipient): self
     {
         $this->recipients[] = $recipient;
+        return $this;
     }
 }

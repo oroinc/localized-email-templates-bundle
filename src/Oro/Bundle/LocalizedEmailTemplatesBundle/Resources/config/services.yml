@@ -32,6 +32,7 @@ services:
             - '@oro_email.email_renderer'
             - '@property_accessor'
             - '@logger'
+            - '@stof_doctrine_extensions.listener.translatable'
 
     # Forms
     oro_localized_email_templates.form.extension.localized_aware_email_template_type:

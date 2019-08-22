@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Form type for collection of EmailTemplateLocalization
  */
-class EmailTemplateLocalizationCollection extends AbstractType
+class EmailTemplateLocalizationCollectionType extends AbstractType
 {
     /**
      * {@inheritdoc}

@@ -32,13 +32,15 @@ class LocalizationAwareEmailTemplateDataMapper implements DataMapperInterface
             return;
         }
 
+        /** @var EmailTemplate $viewData */
         $this->assertViewDataType($viewData);
 
         $innerMapperForms = [];
         foreach ($forms as $form) {
             if ($form->getName() === 'localizations') {
                 $entity = new EmailTemplateLocalization();
-                $entity->setSubject($viewData->getSubject())
+                $entity
+                    ->setSubject($viewData->getSubject())
                     ->setContent($viewData->getContent());
 
                 $data = ['default' => $entity];
@@ -65,44 +67,17 @@ class LocalizationAwareEmailTemplateDataMapper implements DataMapperInterface
      */
     public function mapFormsToData($forms, &$viewData): void
     {
+        if ($viewData === null) {
+            return;
+        }
+
+        /** @var EmailTemplate $viewData */
         $this->assertViewDataType($viewData);
 
         $innerMapperForms = [];
         foreach ($forms as $form) {
             if ($form->getName() === 'localizations') {
-                // Process default template localization
-                /** @var EmailTemplateLocalization[] $data */
-                $data = $form->getData();
-                $viewData
-                    ->setSubject($data['default'] ? $data['default']->getSubject() : null)
-                    ->setContent($data['default'] ? $data['default']->getContent() : null);
-                unset($data['default']);
-
-                // Process existing localizations
-                /** @var EmailTemplateLocalization $templateLocalization */
-                foreach ($viewData->getLocalizations() as $templateLocalization) {
-                    $localizationId = $templateLocalization->getLocalization()->getId();
-                    if (!isset($data[$localizationId])) {
-                        $templateLocalization
-                            ->setSubject(null)
-                            ->setSubjectFallback(true)
-                            ->setContent(null)
-                            ->setContentFallback(true);
-                    } else {
-                        $templateLocalization
-                            ->setSubject($data[$localizationId]->getSubject())
-                            ->setSubjectFallback($data[$localizationId]->isSubjectFallback())
-                            ->setContent($data[$localizationId]->getContent())
-                            ->setContentFallback($data[$localizationId]->isContentFallback());
-
-                        unset($data[$localizationId]);
-                    }
-                }
-
-                // Process new localizations
-                foreach ($data as $newTemplateLocalization) {
-                    $viewData->addLocalization($newTemplateLocalization);
-                }
+                $this->mapFormToLocalizations($form->getData(), $viewData);
             } else {
                 $innerMapperForms[] = $form;
             }
@@ -111,6 +86,45 @@ class LocalizationAwareEmailTemplateDataMapper implements DataMapperInterface
         // Fallback to inner data mapper with not mapped fields
         if ($this->inner) {
             $this->inner->mapFormsToData(new \ArrayIterator($innerMapperForms), $viewData);
+        }
+    }
+
+    /**
+     * @param EmailTemplateLocalization[] $data
+     * @param EmailTemplate $viewData
+     */
+    private function mapFormToLocalizations(array $data, EmailTemplate $viewData): void
+    {
+        // Process default template localization
+        $viewData
+            ->setSubject($data['default'] ? $data['default']->getSubject() : null)
+            ->setContent($data['default'] ? $data['default']->getContent() : null);
+        unset($data['default']);
+
+        // Process existing localizations
+        /** @var EmailTemplateLocalization $templateLocalization */
+        foreach ($viewData->getLocalizations() as $templateLocalization) {
+            $localizationId = $templateLocalization->getLocalization()->getId();
+            if (!isset($data[$localizationId])) {
+                $templateLocalization
+                    ->setSubject(null)
+                    ->setSubjectFallback(true)
+                    ->setContent(null)
+                    ->setContentFallback(true);
+            } else {
+                $templateLocalization
+                    ->setSubject($data[$localizationId]->getSubject())
+                    ->setSubjectFallback($data[$localizationId]->isSubjectFallback())
+                    ->setContent($data[$localizationId]->getContent())
+                    ->setContentFallback($data[$localizationId]->isContentFallback());
+
+                unset($data[$localizationId]);
+            }
+        }
+
+        // Process new localizations
+        foreach ($data as $newTemplateLocalization) {
+            $viewData->addLocalization($newTemplateLocalization);
         }
     }
 

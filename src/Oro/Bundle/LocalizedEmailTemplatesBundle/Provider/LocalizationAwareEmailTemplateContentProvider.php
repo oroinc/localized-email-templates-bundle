@@ -4,6 +4,7 @@ namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Provider;
 
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Gedmo\Translatable\TranslatableListener;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Exception\EmailTemplateCompilationException;
 use Oro\Bundle\EmailBundle\Exception\EmailTemplateNotFoundException;
@@ -33,22 +34,28 @@ class LocalizationAwareEmailTemplateContentProvider
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var TranslatableListener */
+    private $translatableListener;
+
     /**
      * @param RegistryInterface $doctrine
      * @param EmailRenderer $emailRenderer
-     * @param LoggerInterface $logger
      * @param PropertyAccessor $propertyAccessor
+     * @param LoggerInterface $logger
+     * @param TranslatableListener $translatableListener
      */
     public function __construct(
         RegistryInterface $doctrine,
         EmailRenderer $emailRenderer,
         PropertyAccessor $propertyAccessor,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        TranslatableListener $translatableListener
     ) {
         $this->doctrine = $doctrine;
         $this->emailRenderer = $emailRenderer;
         $this->propertyAccessor = $propertyAccessor;
         $this->logger = $logger;
+        $this->translatableListener = $translatableListener;
     }
 
     /**
@@ -68,7 +75,15 @@ class LocalizationAwareEmailTemplateContentProvider
 
         try {
             /** @var EmailTemplate $emailTemplate */
-            $emailTemplateEntity = $repository->findSingleByEmailTemplateCriteria($criteria);
+            $emailTemplateEntity = $repository->findOneLocalized(
+                $criteria,
+                // it disables Gedmo functionality and always returns EmailTemplate with original translations
+                $this->translatableListener->getDefaultLocale()
+            );
+
+            if (!$emailTemplateEntity) {
+                throw new NoResultException();
+            }
         } catch (NonUniqueResultException | NoResultException $exception) {
             $this->logger->error(
                 'Could not find unique email template for the given criteria',

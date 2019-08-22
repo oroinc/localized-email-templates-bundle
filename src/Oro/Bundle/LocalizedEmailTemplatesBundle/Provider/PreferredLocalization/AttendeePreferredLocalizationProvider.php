@@ -34,7 +34,7 @@ class AttendeePreferredLocalizationProvider extends BasePreferredLocalizationPro
      * @param Attendee $entity
      * @return Localization|null
      */
-    public function getPreferredLocalizationForEntity($entity): ?Localization
+    protected function getPreferredLocalizationForEntity($entity): ?Localization
     {
         return $this->innerLocalizationProvider->getPreferredLocalization($entity->getUser());
     }
