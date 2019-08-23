@@ -51,12 +51,18 @@ class EmailTemplateLocalizationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('subject', TextType::class, ['attr' => ['maxlength' => 255]])
+            ->add('subject', TextType::class, [
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'required' => false,
+            ])
             ->add('content', EmailTemplateRichTextType::class, [
                 'attr' => [
                     'class' => 'template-editor',
                     'data-wysiwyg-enabled' => $options['wysiwyg_enabled'],
                 ],
+                'required' => false,
                 'wysiwyg_options' => $options['wysiwyg_options'],
             ]);
 
