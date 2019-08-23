@@ -55,7 +55,7 @@ services:
         class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Action\SendOrderConfirmationEmail'
         public: true
         decorates: 'oro_checkout.action.send_order_confirmation_email'
-        parent: oro_localized_email_templates.workflow.action.send_email_template
+        parent: 'oro_localized_email_templates.action.send_email_template'
         tags:
             - { name: oro_action.action, alias: send_order_confirmation_email }
 
