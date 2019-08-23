@@ -28,6 +28,8 @@ class OroLocalizedEmailTemplatesExtensionTest extends ExtensionTestCase
         $this->assertPublicServices([
             'oro_localized_email_templates.manager.localization_aware_email_notification',
             'oro_localized_email_templates.manager.localization_aware_email_template',
+            'oro_localized_email_templates.action.send_email_template',
+            'oro_localized_email_templates.action.send_order_confirmation_email',
             PreferredLocalizationProviderInterface::class
         ]);
     }

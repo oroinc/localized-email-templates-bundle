@@ -1,0 +1,11 @@
+oro_behat_extension:
+    elements:
+        Email Template Form:
+            selector: "form[id^='oro_email_emailtemplate']"
+            class: Oro\Bundle\LocalizedEmailTemplatesBundle\Tests\Behat\Element\EmailTemplateForm
+            options:
+                mapping:
+                    Subject: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__subject"]'
+                    Subject Fallback: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__subject-fallback"]'
+                    Content: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__content"]'
+                    Content Fallback: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__content-fallback"]'

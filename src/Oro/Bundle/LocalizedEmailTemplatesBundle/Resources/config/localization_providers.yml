@@ -38,7 +38,7 @@ services:
             - '@oro_config.user'
             - '@oro_locale.manager.localization'
         tags:
-            - { name: oro_localized_email_templates.preferred_localization_providers }
+            - { name: oro_localized_email_templates.preferred_localization_provider }
 
     # ... OroUserProBundle
     oro_localized_email_templates.provider.preferred_localization_provider.user_with_organization:

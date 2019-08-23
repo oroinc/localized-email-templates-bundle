@@ -41,6 +41,19 @@ class LocalizedTemplateDTO
     }
 
     /**
+     * @return string[]
+     */
+    public function getEmails(): array
+    {
+        $emails = [];
+        foreach ($this->recipients as $recipient) {
+            $emails[] = $recipient->getEmail();
+        }
+
+        return $emails;
+    }
+
+    /**
      * @param EmailHolderInterface $recipient
      * @return LocalizedTemplateDTO
      */
