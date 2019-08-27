@@ -5,7 +5,15 @@ oro_behat_extension:
             class: Oro\Bundle\LocalizedEmailTemplatesBundle\Tests\Behat\Element\EmailTemplateForm
             options:
                 mapping:
-                    Subject: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__subject"]'
-                    Subject Fallback: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__subject-fallback"]'
-                    Content: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__content"]'
-                    Content Fallback: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__content-fallback"]'
+                    Subject:
+                        type: 'css'
+                        locator: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__subject"]'
+                    Subject Fallback:
+                        type: 'css'
+                        locator: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__subject-fallback"]'
+                    Content:
+                        type: 'css'
+                        locator: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__content"]'
+                    Content Fallback:
+                        type: 'css'
+                        locator: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__content-fallback"]'
