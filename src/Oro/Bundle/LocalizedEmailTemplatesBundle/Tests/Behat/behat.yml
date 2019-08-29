@@ -17,3 +17,13 @@ oro_behat_extension:
                     Content Fallback:
                         type: 'css'
                         locator: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__content-fallback"]'
+    suites:
+        OroLocalizedEmailTemplatesBundle:
+            contexts:
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - OroFormBundle::FormContext
+                - OroDataGridBundle::GridContext
+                - OroConfigBundle::FeatureContext
+                - OroEmailBundle::EmailContext
+            paths:
+                - '@OroLocalizedEmailTemplatesBundle/Tests/Behat/Features'
