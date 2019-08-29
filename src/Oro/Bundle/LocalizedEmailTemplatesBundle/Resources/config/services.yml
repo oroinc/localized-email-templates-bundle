@@ -17,6 +17,15 @@ services:
             - '@oro_email.mailer.processor'
             - '@oro_localized_email_templates.provider.localized_template'
 
+    oro_localized_email_templates.manager.localization_aware_email_template.mass:
+        class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Manager\LocalizationAwareEmailTemplateManager'
+        public: false
+        decorates: 'oro_notification.manager.template_email.mass'
+        arguments:
+            - '@oro_notification.mailer.mass_email_direct_mailer'
+            - '@oro_email.mailer.processor'
+            - '@oro_localized_email_templates.provider.localized_template'
+
     oro_localized_email_templates.provider.localized_template:
         class: 'Oro\Bundle\LocalizedEmailTemplatesBundle\Provider\LocalizedTemplateProvider'
         public: false
