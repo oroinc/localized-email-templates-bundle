@@ -1,3 +1,3 @@
 config:
     paths:
-        'orolocalizedemailtemplates/js/app/components/localized-template-fallback-component': 'bundles/orolocalizedemailtemplates/js/app/components/localized-template-fallback-component.js'
+        'orolocalizedemailtemplates/js/app/view/localized-template-view': 'bundles/orolocalizedemailtemplates/js/app/view/localized-template-view.js'

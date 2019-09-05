@@ -46,15 +46,7 @@
 {% endblock %}
 
 {% block _oro_email_emailtemplate_localizations_template_fallback_checkbox_row %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-
-    <div class="control-group control-group-checkbox" {{ UI.renderPageComponentAttributes({
-        module: 'orolocalizedemailtemplates/js/app/components/localized-template-fallback-component',
-        options: {
-            'sourceId': form.vars.id,
-            'targetId': form.vars.target_id,
-        }
-    }) }}>
+    <div class="control-group control-group-checkbox">
         <div class="control-label wrap">&nbsp;</div>
         <div class="controls">
             {{ form_widget(form) }}
@@ -90,6 +82,8 @@
 {% endmacro %}
 
 {% macro renderTab(form, isActive = false, uniqid = null) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set locale = 'localization-' ~ form.vars.name %}
 
     <div class="emailtemplate-translatation-fields-{{ locale }} tab-pane{% if isActive %} active{% endif %}"
@@ -98,6 +92,15 @@
                 id="{{ uniqid }}"
                 aria-labelledby="{{ uniqid ~ '-tab' }}"
             {% endif %}
+            {{ UI.renderPageComponentAttributes({
+                view: 'orolocalizedemailtemplates/js/app/view/localized-template-view',
+                options: {
+                    'localization': {
+                        'id': form.vars.localization_id,
+                        'parentId': form.vars.localization_parent_id,
+                    }
+                }
+            }) }}
     >
         {{ form_widget(form) }}
     </div>

@@ -127,16 +127,19 @@ class EmailTemplateLocalizationType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['localization_title'] = $options['localization']
-            ? $options['localization']->getTitle($this->localizationManager->getDefaultLocalization())
-            : null;
+        $view->vars['localization_id'] = null;
+        $view->vars['localization_title'] = null;
+        $view->vars['localization_parent_id'] = null;
 
-        if (isset($view->children['subject'], $view->children['subjectFallback'])) {
-            $this->processFallbackView($view->children['subject'], $view->children['subjectFallback']);
-        }
+        if (isset($options['localization'])) {
+            $view->vars['localization_id'] = $options['localization']->getId();
+            $view->vars['localization_title'] = $options['localization']->getTitle(
+                $this->localizationManager->getDefaultLocalization()
+            );
 
-        if (isset($view->children['content'], $view->children['contentFallback'])) {
-            $this->processFallbackView($view->children['content'], $view->children['contentFallback']);
+            if ($options['localization']->getParentLocalization()) {
+                $view->vars['localization_parent_id'] = $options['localization']->getParentLocalization()->getId();
+            }
         }
     }
 
@@ -163,15 +166,5 @@ class EmailTemplateLocalizationType extends AbstractType
     public function getBlockPrefix(): string
     {
         return 'oro_email_emailtemplate_localization';
-    }
-
-    /**
-     * @param FormView $field
-     * @param FormView $fallback
-     */
-    private function processFallbackView(FormView $field, FormView $fallback): void
-    {
-        $field->vars['disabled'] = (bool)$fallback->vars['data'];
-        $fallback->vars['target_id'] = $field->vars['id'];
     }
 }
