@@ -393,7 +393,7 @@ class LocalizationAwareSendEmailTemplateTest extends \PHPUnit\Framework\TestCase
 
         $this->emailTemplate->expects($this->once())
             ->method('getType')
-            ->willReturn('txt');
+            ->willReturn('plain/text');
 
         $this->emailProcessor->expects($this->once())
             ->method('process')
@@ -450,7 +450,7 @@ class LocalizationAwareSendEmailTemplateTest extends \PHPUnit\Framework\TestCase
 
         $this->emailTemplate->expects($this->once())
             ->method('getType')
-            ->willReturn('txt');
+            ->willReturn('plain/text');
         $this->emailTemplate->expects($this->once())
             ->method('getSubject')
             ->willReturn($expected['subject']);
@@ -470,18 +470,15 @@ class LocalizationAwareSendEmailTemplateTest extends \PHPUnit\Framework\TestCase
 
         $this->emailProcessor->expects($this->once())
             ->method('process')
-            ->with($this->isInstanceOf('Oro\Bundle\EmailBundle\Form\Model\Email'))
-            ->willReturnCallback(
-                function (Email $model) use ($emailUserEntity, $expected) {
-                    $this->assertEquals($expected['body'], $model->getBody());
-                    $this->assertEquals($expected['subject'], $model->getSubject());
-                    $this->assertEquals($expected['from'], $model->getFrom());
-                    $this->assertEquals($expected['to'], $model->getTo());
-                    $this->assertEquals('txt', $model->getType());
-
-                    return $emailUserEntity;
-                }
-            );
+            ->with($this->equalTo(
+                (new Email())
+                    ->setBody($expected['body'])
+                    ->setSubject($expected['subject'])
+                    ->setFrom($expected['from'])
+                    ->setTo($expected['to'])
+                    ->setType('text')
+            ), $this->anything(), $this->anything())
+            ->willReturn($emailUserEntity);
 
         if (array_key_exists('attribute', $options)) {
             $this->contextAccessor->expects($this->once())
@@ -619,12 +616,12 @@ class LocalizationAwareSendEmailTemplateTest extends \PHPUnit\Framework\TestCase
         $enTemplate = new EmailTemplate();
         $enTemplate->setSubject('subject_en');
         $enTemplate->setContent('body_en');
-        $enTemplate->setType('txt');
+        $enTemplate->setType('text');
 
         $deTemplate = new EmailTemplate();
         $deTemplate->setSubject('subject_de');
         $deTemplate->setContent('body_de');
-        $deTemplate->setType('txt');
+        $deTemplate->setType('text');
 
         $options = [
             'from' => 'from@test.com',
@@ -669,36 +666,35 @@ class LocalizationAwareSendEmailTemplateTest extends \PHPUnit\Framework\TestCase
 
         $email = new EmailEntity();
 
-        $this->emailProcessor->expects($this->at(1))
+        $this->emailProcessor->expects($this->exactly(2))
             ->method('process')
-            ->willReturnCallback(
-                function (Email $model) use ($enTemplate, $toEmail1, $recipientEmail1, $email) {
-                    $this->assertEquals($enTemplate->getSubject(), $model->getSubject());
-                    $this->assertEquals($enTemplate->getContent(), $model->getBody());
-                    $this->assertEquals([$toEmail1, $recipientEmail1], $model->getTo());
-                    $this->assertEquals('txt', $model->getType());
-
-                    $emailUser = new EmailUser();
-                    $emailUser->setEmail($email);
-
-                    return $emailUser;
-                }
-            );
-        $this->emailProcessor->expects($this->at(3))
-            ->method('process')
-            ->willReturnCallback(
-                function (Email $model) use ($deTemplate, $toEmail2, $recipientEmail2, $email) {
-                    $this->assertEquals($deTemplate->getSubject(), $model->getSubject());
-                    $this->assertEquals($deTemplate->getContent(), $model->getBody());
-                    $this->assertEquals([$toEmail2, $recipientEmail2], $model->getTo());
-                    $this->assertEquals('txt', $model->getType());
-
-                    $emailUser = new EmailUser();
-                    $emailUser->setEmail($email);
-
-                    return $emailUser;
-                }
-            );
+            ->withConsecutive(
+                [
+                    $this->equalTo(
+                        (new Email())
+                            ->setBody($enTemplate->getContent())
+                            ->setSubject($enTemplate->getSubject())
+                            ->setFrom($options['from'])
+                            ->setTo([$toEmail1, $recipientEmail1])
+                            ->setType('text')
+                    ),
+                    $this->anything(),
+                    $this->anything()
+                ],
+                [
+                    $this->equalTo(
+                        (new Email())
+                            ->setBody($deTemplate->getContent())
+                            ->setSubject($deTemplate->getSubject())
+                            ->setFrom($options['from'])
+                            ->setTo([$toEmail2, $recipientEmail2])
+                            ->setType('text')
+                    ),
+                    $this->anything(),
+                    $this->anything()
+                ]
+            )
+            ->willReturn((new EmailUser())->setEmail($email));
 
         $context = [];
 

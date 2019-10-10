@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EmailBundle\Entity\EmailUser;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
+use Oro\Bundle\EmailBundle\Model\EmailTemplate;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\EmailBundle\Tools\EmailAddressHelper;
 use Oro\Bundle\EmailBundle\Workflow\Action\AbstractSendEmail;
@@ -124,7 +125,7 @@ class LocalizationAwareSendEmailTemplate extends AbstractSendEmail
             $emailModel->setTo($localizedTemplateDTO->getEmails());
             $emailModel->setSubject($emailTemplate->getSubject());
             $emailModel->setBody($emailTemplate->getContent());
-            $emailModel->setType($emailTemplate->getType());
+            $emailModel->setType($emailTemplate->getType() === EmailTemplate::CONTENT_TYPE_HTML ? 'html' : 'text');
 
             try {
                 $emailUsers[] = $this->emailProcessor->process(
