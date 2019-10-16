@@ -1,0 +1,41 @@
+{
+    "name": "oro/localized-email-templates-bundle",
+    "description": "Oro Localized Email Templates Bundle",
+    "type": "symfony-bundle",
+    "keywords": ["Oro", "Localization", "Email", "Template"],
+    "homepage": "https://github.com/oroinc/localized-email-templates-bundle",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Oro, Inc",
+            "homepage": "http://www.oroinc.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Oro\\Bundle\\LocalizedEmailTemplatesBundle\\": "src/Oro/Bundle/LocalizedEmailTemplatesBundle"},
+        "exclude-from-classmap": ["/Tests/"]
+    },
+    "require": {
+        "oro/platform": "~4.0"
+    },
+    "conflict": {
+        "oro/platform": "<4.0"
+    },
+    "repositories": {
+        "oro": {
+            "type": "composer",
+            "url": "https://packagist.orocrm.com"
+        },
+        "asset-packagist": {
+            "type": "composer",
+            "url": "https://asset-packagist.orocrm.com"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1-dev"
+        }
+    }
+}
