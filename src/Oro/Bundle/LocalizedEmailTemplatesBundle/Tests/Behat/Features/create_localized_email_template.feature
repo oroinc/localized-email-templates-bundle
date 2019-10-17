@@ -80,7 +80,6 @@ Feature: Create localized email template
       | Content  | New localization 1 content |
     When I save form
     Then I should see "Template saved" flash message
-    And I wait for action
     When I send email template "Test Template" to "admin"
     Then Email should contains the following:
       | To      | admin@example.com          |
