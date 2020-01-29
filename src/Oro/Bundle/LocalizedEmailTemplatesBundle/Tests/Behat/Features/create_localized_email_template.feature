@@ -24,6 +24,7 @@ Feature: Create localized email template
     Then I should see "Use Localization 1 (Parent localization)"
     And I fill "Email Template Form" with:
       | Content | Localization 2 content |
+    And click "Ellipsis button"
     When I click "Localization 3"
     Then I should see "Use Localization 1 (Parent localization)"
     And I fill "Email Template Form" with:
@@ -35,8 +36,8 @@ Feature: Create localized email template
     Given I go to System / Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Enabled Localizations | [English, Localization1, Localization2, Localization3] |
-      | Default Localization  | English                                                |
+      | Enabled Localizations | [English (United States), Localization1, Localization2, Localization3] |
+      | Default Localization  | English (United States)                                                |
     And I save form
     And I click My Configuration in user menu
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar

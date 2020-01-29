@@ -17,6 +17,11 @@ oro_behat_extension:
                     Content Fallback:
                         type: 'css'
                         locator: 'div[class^="emailtemplate-translatation-fields-localization-"].tab-pane.active [data-name="field__content-fallback"]'
+
+        Ellipsis button:
+            selector:
+                type: xpath
+                locator: '//div[@class="emailtemplate-translatation oro-tabs tabbable"]//a[@role="button"]'
     suites:
         OroLocalizedEmailTemplatesBundle:
             contexts:
