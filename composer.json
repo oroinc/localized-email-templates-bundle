@@ -16,7 +16,7 @@
         "exclude-from-classmap": ["/Tests/"]
     },
     "require": {
-        "oro/platform": "~4.0"
+        "oro/platform": "4.2.*"
     },
     "conflict": {
         "oro/platform": "<4.0"
