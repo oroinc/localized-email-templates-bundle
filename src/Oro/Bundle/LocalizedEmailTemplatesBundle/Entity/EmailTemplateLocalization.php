@@ -63,26 +63,16 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
      */
     private $contentFallback = true;
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Localization|null
-     */
     public function getLocalization(): ?Localization
     {
         return $this->localization;
     }
 
-    /**
-     * @param Localization|null $localization
-     * @return EmailTemplateLocalization
-     */
     public function setLocalization(?Localization $localization): EmailTemplateLocalization
     {
         $this->localization = $localization;
@@ -97,28 +87,17 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
         return $this->subject;
     }
 
-    /**
-     * @param string|null $subject
-     * @return EmailTemplateLocalization
-     */
     public function setSubject(?string $subject): EmailTemplateLocalization
     {
         $this->subject = $subject;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isSubjectFallback(): bool
     {
         return $this->subjectFallback;
     }
 
-    /**
-     * @param bool $subjectFallback
-     * @return EmailTemplateLocalization
-     */
     public function setSubjectFallback(bool $subjectFallback): EmailTemplateLocalization
     {
         $this->subjectFallback = $subjectFallback;
@@ -133,28 +112,17 @@ class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
         return $this->content;
     }
 
-    /**
-     * @param string|null $content
-     * @return EmailTemplateLocalization
-     */
     public function setContent(?string $content): EmailTemplateLocalization
     {
         $this->content = $content;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isContentFallback(): bool
     {
         return $this->contentFallback;
     }
 
-    /**
-     * @param bool $contentFallback
-     * @return EmailTemplateLocalization
-     */
     public function setContentFallback(bool $contentFallback): EmailTemplateLocalization
     {
         $this->contentFallback = $contentFallback;
