@@ -9,8 +9,8 @@ use Oro\Bundle\LocalizedEmailTemplatesBundle\Model\ExtendEmailTemplateLocalizati
 
 /**
  * Represents localizations for email templates.
- *
- * @deprecated since 4.1 Use {@see \Oro\Bundle\EmailBundle\Entity\EmailTemplateTranslation} instead.
+ * This entity exists only for the case when an application is updated
+ * from an older version with OroLocalizedEmailTemplatesBundle.
  *
  * @ORM\Entity()
  * @ORM\Table(name="oro_email_template_localized")
