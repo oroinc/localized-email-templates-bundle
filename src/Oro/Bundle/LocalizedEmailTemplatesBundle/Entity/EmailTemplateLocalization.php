@@ -4,8 +4,9 @@ namespace Oro\Bundle\LocalizedEmailTemplatesBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocalizedEmailTemplatesBundle\Model\ExtendEmailTemplateLocalization;
 
 /**
  * Represents localizations for email templates.
@@ -16,8 +17,10 @@ use Oro\Bundle\LocalizedEmailTemplatesBundle\Model\ExtendEmailTemplateLocalizati
  * @ORM\Table(name="oro_email_template_localized")
  * @Config()
  */
-class EmailTemplateLocalization extends ExtendEmailTemplateLocalization
+class EmailTemplateLocalization implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *
