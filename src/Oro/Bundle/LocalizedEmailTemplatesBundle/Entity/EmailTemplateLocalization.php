@@ -82,9 +82,6 @@ class EmailTemplateLocalization implements ExtendEntityInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSubject(): ?string
     {
         return $this->subject;
@@ -107,9 +104,6 @@ class EmailTemplateLocalization implements ExtendEntityInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getContent(): ?string
     {
         return $this->content;
