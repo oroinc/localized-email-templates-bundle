@@ -16,7 +16,7 @@
         "exclude-from-classmap": ["/Tests/"]
     },
     "require": {
-        "oro/platform": "6.0.*"
+        "oro/platform": "6.1.*"
     },
     "conflict": {
         "oro/platform": "<4.0"
@@ -31,7 +31,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "6.0-dev"
+            "dev-master": "6.1-dev"
         }
     }
 }
