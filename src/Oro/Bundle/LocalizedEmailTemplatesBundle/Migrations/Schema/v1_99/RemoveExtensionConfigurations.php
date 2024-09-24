@@ -13,9 +13,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RemoveExtensionConfigurations implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
     public function up(Schema $schema, QueryBag $queries): void
     {
         if ($schema->hasTable('oro_email_template_localized')) {
